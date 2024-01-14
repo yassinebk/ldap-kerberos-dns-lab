@@ -1,0 +1,48 @@
+---
+version: "2"
+
+services:
+  openldap:
+    image: osixia/openldap
+    ports:
+      - 1389:1389
+      - 1636:1636
+      - 636:636
+    env_file: ./ldap.env
+    volumes:
+      - ./ldap/certs:/container/service/slapd/assets/certs
+      - ./seeders:/container/service/slapd/assets/config/bootstrap/ldif/custom
+    command: "--copy-service"
+    networks:
+      - lab
+
+  ldap_admin:
+    image: wheelybird/ldap-user-manager
+    environment:
+      - LDAP_IGNORE_CERT_ERRORS=true
+      - LDAP_URI=ldaps://openldap:636
+      - LDAP_REQUIRE_STARTTLS=TRUE
+      - LDAP_BASE_DN=dc=acme,dc=org
+      - LDAP_ADMIN_BIND_DN=cn=admin,dc=acme,dc=org
+      - LDAP_ADMIN_BIND_PWD=admin
+      - LDAP_USER_OU=users
+      - LDAP_ADMINS_GROUP=admin
+    ports:
+      - 3000:443
+    networks:
+      - lab
+  ssh-container:
+    build:
+      dockerfile: Dockerfile
+      context: ./ssh-container
+      
+    depends_on:
+      - openldap
+    ports:
+      - "2222:22"
+    networks:
+      - lab
+
+networks:
+  lab:
+    driver: bridge
