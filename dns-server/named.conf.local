@@ -1,0 +1,5 @@
+zone "lab.lan" {    
+	type master;    
+	file "/etc/bind/zones/db.lab.lan";
+};
+

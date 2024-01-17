@@ -30,11 +30,11 @@ services:
       - 3000:443
     networks:
       - lab
+
   ssh-container:
     build:
       dockerfile: Dockerfile
       context: ./ssh-container
-
     depends_on:
       - openldap
     ports:
@@ -68,6 +68,14 @@ services:
       - 5200:80
     networks:
       - lab
+
+  dns-server:
+    build:
+      dockerfile: Dockerfile
+      context: ./dns-server
+    networks:
+      - lab
+    restart: always
 
 networks:
   lab:

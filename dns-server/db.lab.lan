@@ -1,0 +1,19 @@
+$TTL 1d ; default expiration time (in seconds) of all RRs without their own TTL value
+@    IN  SOA  ns1.lab.lan. root.lab.lan. (
+                 3      ; Serial
+                 1d;    ; Refresh
+                 1h;    ; Retry
+                 1w;    ; Expire
+                 1h);   ; Negative Cache TTL
+
+; Name servers - NS records
+@    IN  NS  ns1.lab.lan.;
+
+; Name servers - A records
+ns1.lab.lan.        IN  A  dns-server.lab.lan
+openldap.lab.lan.   IN  A  openldap.lab.lan
+
+; Uncomment when done configuring these
+;openvpn.lab.lan.    IN  A  openvpn
+;apache.lab.lan.     IN  A  apache
+
