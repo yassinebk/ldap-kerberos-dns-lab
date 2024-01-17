@@ -4,7 +4,8 @@ export LDAP_HOST="ldaps://localhost:636"
 export USER_PW="student_password"
 export ADMIN_PW="admin"
 
-ldapadd -Z -H $LDAP_HOST -D $ADMIN_DN -w $ADMIN_PW -f ./users.ldif
+
+ldapadd -Z -H $LDAP_HOST -D $ADMIN_DN -w $ADMIN_PW -f ./ldifs/users.ldif
 ldapsearch -H $LDAP_HOST -x -b "ou=users,dc=acme,dc=org"  -D $ADMIN_DN -w $ADMIN_PW
 
 echo "Testing connection with password"

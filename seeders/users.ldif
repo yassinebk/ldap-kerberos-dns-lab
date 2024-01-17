@@ -1,3 +1,25 @@
+dn: ou=Applications,dc=acme,dc=org
+objectClass: organizationalUnit
+ou: Applications
+
+dn: cn=app1,ou=Applications,dc=acme,dc=org
+cn: app1
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+userPassword: password
+
+dn: cn=WebAccess,ou=groups,dc=acme,dc=org
+objectClass: groupOfNames
+cn: softs
+description: Web platform access
+member:  uid=johnc,ou=users,dc=acme,dc=org
+
+dn: cn=VpnAccess,ou=groups,dc=acme,dc=org
+objectClass: groupOfNames
+cn: softs
+description: VpnUser
+member:  uid=mariax,ou=users,dc=acme,dc=org
+
 # User entry for johnc
 dn: uid=johnc,ou=users,dc=acme,dc=org
 objectClass: top
@@ -183,3 +205,4 @@ cn: bma
 objectClass: posixGroup
 gidNumber: 10000
 memberUid: bma
+

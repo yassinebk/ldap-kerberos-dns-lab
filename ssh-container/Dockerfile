@@ -15,10 +15,16 @@ RUN apt-get update && \
 COPY ./ldap_server.crt /tmp/ldap_server.crt
 COPY ./ldap.conf /tmp/ldap.conf
 COPY ./sssd.conf /tmp/sssd.conf
+
 COPY setup.sh /tmp/setup.sh
+
+COPY ./nsswitch.conf /tmp/nsswitch.conf
+
+COPY ./ldap.secret /tmp/ldap.secret
+COPY ./libnss-ldap.conf /tmp/libnss-ldap.conf
 RUN chmod +x /tmp/setup.sh && /tmp/setup.sh
 
 EXPOSE 22
 
 # Start the SSH server
-CMD ["/usr/sbin/sshd", "-D","-d"]
+CMD ["/usr/sbin/sshd", "-D"]

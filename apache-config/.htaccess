@@ -1,0 +1,11 @@
+AuthBasicProvider ldap
+AuthType Basic
+AuthName "This page is restricted to some vip members"
+
+AuthLDAPURL ldaps://openldap:636
+AuthLDAPBindDN cn=admin,dc=acme,dc=org
+AuthLDAPBindPassword admin
+
+AuthLDAPGroupAttribute memberUid
+require ldap-group CN=posixGroup,OU=groups,DC=acme,dc=org
+AuthLDAPGroupAttributeIsDN On

@@ -5,8 +5,7 @@ services:
   openldap:
     image: osixia/openldap
     ports:
-      - 1389:1389
-      - 1636:1636
+      - 389:389
       - 636:636
     env_file: ./ldap.env
     volumes:
@@ -35,14 +34,43 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./ssh-container
-      
+
     depends_on:
       - openldap
     ports:
       - "2222:22"
     networks:
       - lab
+  openvpn:
+    build:
+      context: ./openvpn-config
+    depends_on:
+      - openldap
+    volumes:
+      - ./openvpn-config/logs/:/var/log/openvpn
+    env_file: ./openvpn.env
+    ports:
+      - 1194:1194/udp
+    cap_add:
+      - "NET_ADMIN"
+    environment:
+      - DEBUG=1
+    networks:
+      - lab
+  apache-server:
+    depends_on:
+      - openldap
+    build:
+      context: ./apache-config
+      dockerfile: Dockerfile
+    env_file: ./apache.env
+    ports:
+      - 5200:80
+    networks:
+      - lab
 
 networks:
   lab:
-    driver: bridge
+    external:
+      name: lab
+  # 172.24.26.0/24

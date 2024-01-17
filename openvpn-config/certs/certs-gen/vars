@@ -1,0 +1,5 @@
+export KEY_COUNTRY="TN"
+export KEY_PROVINCE="tn"
+export KEY_CITY="Tunis"
+export KEY_ORG="Acme"
+export KEY_EMAIL="vpn@acme.org"
