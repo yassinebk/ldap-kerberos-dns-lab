@@ -1,1 +1,5 @@
 ldap
+
+openvpn-auth-ldap/
+seeders
+openvpn-config/openvpn-status.log

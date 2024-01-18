@@ -8,10 +8,35 @@ services:
       - 389:389
       - 636:636
     env_file: ./ldap.env
+    healthcheck:
+      test: "[ -e /run/slapd/slapd.pid ] || exit 1"
+      interval: 30s
+      timeout: 30s
+      retries: 100
     volumes:
       - ./ldap/certs:/container/service/slapd/assets/certs
-      - ./seeders:/container/service/slapd/assets/config/bootstrap/ldif/custom
-    command: "--copy-service"
+      # - ./seeders:/container/service/slapd/assets/config/bootstrap/ldif/custom
+      - type: bind
+        source: /dev/urandom
+        target: /dev/urandom
+        read_only: true
+
+      - type: bind
+        source: /etc/timezone
+        target: /etc/timezone
+        read_only: true
+
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+
+      - type: bind
+        source: ./ldifs
+        target: /container/service/slapd/assets/config/bootstrap/ldif/custom
+        read_only: true
+
+    command: "--copy-service --loglevel debug"
     networks:
       - lab
 
@@ -36,7 +61,8 @@ services:
       dockerfile: Dockerfile
       context: ./ssh-container
     depends_on:
-      - openldap
+      openldap:
+        condition: service_healthy
     ports:
       - "2222:22"
     networks:
@@ -59,7 +85,8 @@ services:
       - lab
   apache-server:
     depends_on:
-      - openldap
+      openldap:
+        condition: service_healthy
     build:
       context: ./apache-config
       dockerfile: Dockerfile
@@ -77,8 +104,52 @@ services:
       - lab
     restart: always
 
+  kerberos:
+    image: chistousov/kerberos5:1.0.0
+    env_file: ./kerberos.env
+    ports:
+      - 750:750
+      - 750:750/udp
+    mem_limit: 512M
+    volumes:
+      - type: bind
+        source: /dev/urandom
+        target: /dev/urandom
+        read_only: true
+
+      - type: bind
+        source: /etc/timezone
+        target: /etc/timezone
+        read_only: true
+
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+
+      # - type: volume
+      #   source: kdc-volume
+      #   target: /etc/krb5kdc
+
+    restart: unless-stopped
+    healthcheck:
+      test: "[ -e /krb5kdc.pid ] || exit 1"
+      interval: 30s
+      timeout: 30s
+      retries: 100
+    labels:
+      - docker-volume-backup.stop-during-backup=kdc-database-backup-db-stop-label
+    depends_on:
+      openldap:
+        condition: service_healthy
+
+    networks:
+      - lab
+
 networks:
   lab:
-    external:
-      name: lab
-  # 172.24.26.0/24
+    external: true
+    name: lab
+
+volumes:
+  kdc-volume:

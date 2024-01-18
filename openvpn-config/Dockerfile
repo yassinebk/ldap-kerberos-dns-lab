@@ -2,7 +2,7 @@ FROM ubuntu:latest
 
 RUN apt update && apt install -y openvpn easy-rsa gettext-base iptables ldap-utils  openvpn-auth-ldap
 
-COPY ./ldap-ca.crt /certs/ldap-ca.crt
+RUN mkdir /certs
 COPY certs/ /tmp/certs
 COPY server.conf /etc/openvpn/server.conf
 COPY ldap-auth.conf /etc/openvpn/auth/ldap-auth.conf

@@ -1,13 +1,3 @@
-# Create organizational unit for users
-dn: ou=users,dc=acme,dc=org
-objectClass: organizationalUnit
-ou: users
-
-# Create organizational unit for groups
-dn: ou=groups,dc=acme,dc=org
-objectClass: organizationalUnit
-ou: groups
-
 dn: cn=sshldapuser,dc=acme,dc=org
 objectClass: posixGroup
 objectClass: top
